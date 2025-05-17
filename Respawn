@@ -5,8 +5,8 @@ public class EnemySpawnManager : MonoBehaviour { [Header("Enemy Settings")] publ
 [Header("Spawn Rules")]
 public int initialSpawnCount = 15; // número de enemigos al iniciar la zona
 public float respawnCooldown = 2f;
-public float spawnDelay = 0.5f; // tiempo entre animación y aparición
-public float ironDropChance = 0.3f; posibilidad de dropeo de mineral hierro
+public float spawnDelay = 0.5f; // tiempo entre animación de entrada y aparición
+public float ironDropChance = 0.3f; posibilidad de dropeo de mineral hierro, en este caso lo puse a 1 de 3 por cada una
 
 private List<GameObject> activeEnemies = new List<GameObject>();
 private bool isPlayerInZone = true; // actualizar esto según la zona en que esté el jugador (hay que crear como objeto zona 1, 2 y 3)
