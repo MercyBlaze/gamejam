@@ -1,0 +1,80 @@
+// EnemySpawnManager.cs using System.Collections; using System.Collections.Generic; using UnityEngine;
+
+public class EnemySpawnManager : MonoBehaviour { [Header("Enemy Settings")] public GameObject enemyPrefab; public GameObject spawnEffectPrefab; // animación previa de aparición public Transform[] spawnPoints; // puntos posibles dentro del área libre (fuera de colisiones)
+
+[Header("Spawn Rules")]
+public int initialSpawnCount = 15; // número de enemigos al iniciar la zona
+public float respawnCooldown = 2f;
+public float spawnDelay = 0.5f; // tiempo entre animación y aparición
+public float ironDropChance = 0.3f; posibilidad de dropeo de mineral hierro
+
+private List<GameObject> activeEnemies = new List<GameObject>();
+private bool isPlayerInZone = true; // actualizar esto según la zona en que esté el jugador (hay que crear como objeto zona 1, 2 y 3)
+
+void Start()
+{
+    SpawnInitialEnemies();
+}
+
+void SpawnInitialEnemies()
+{
+    for (int i = 0; i < initialSpawnCount; i++)
+    {
+        StartCoroutine(SpawnEnemyWithEffect(RandomSpawnPoint()));
+    }
+}
+
+IEnumerator SpawnEnemyWithEffect(Transform spawnPoint)
+{
+    // animación de entrada
+    GameObject effect = Instantiate(spawnEffectPrefab, spawnPoint.position, Quaternion.identity);
+    yield return new WaitForSeconds(spawnDelay);
+
+    GameObject enemy = Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity);
+    enemy.GetComponent<Enemy>().OnEnemyDied += HandleEnemyDeath;
+
+    activeEnemies.Add(enemy);
+
+    // posibilidad de dropeo
+    if (Random.value < ironDropChance)
+    {
+        DropIron(spawnPoint.position);
+    }
+}
+
+void DropIron(Vector3 position)
+{
+    // tu lógica para dropear el mineral aquí
+    Debug.Log("Iron dropped at " + position);
+}
+
+void HandleEnemyDeath(GameObject enemy)
+{
+    activeEnemies.Remove(enemy);
+    StartCoroutine(RespawnAfterCooldown());
+}
+
+IEnumerator RespawnAfterCooldown()
+{
+    yield return new WaitForSeconds(respawnCooldown);
+
+    if (isPlayerInZone)
+    {
+        StartCoroutine(SpawnEnemyWithEffect(RandomSpawnPoint()));
+    }
+}
+
+Transform RandomSpawnPoint()
+{
+    // elige uno de los puntos seguros predefinidos
+    return spawnPoints[Random.Range(0, spawnPoints.Length)];
+}
+
+// Opcional: llama a esto desde un trigger para saber si el jugador está en esta zona
+public void SetPlayerInZone(bool inZone)
+{
+    isPlayerInZone = inZone;
+}
+
+}
+
