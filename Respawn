@@ -44,7 +44,7 @@ IEnumerator SpawnEnemyWithEffect(Transform spawnPoint)
 
 void DropIron(Vector3 position)
 {
-    // tu lógica para dropear el mineral aquí
+    // hay que crear un prefab del mineral con colisionador para que detecte y recoja, tengo un tutorial que lo enseña ya lo subo
     Debug.Log("Iron dropped at " + position);
 }
 
